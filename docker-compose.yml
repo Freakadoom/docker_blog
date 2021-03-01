@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  db:
+    image: mysql:5.7    
+    volumes:
+    - ./tmp/db:/var/lib/mysql
+    restart: always
+    environment:     
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: blog
+      MYSQL_USER: pavel
+      MYSQL_PASSWORD: root
+    ports:
+    - "3308:3306"
+  web: 
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+    - .:/docker_blog
+    environment:
+      DB_USER: root
+      DB_NAME: blog
+      DB_PASSWORD: root
+      DB_HOST: db
+      
+
+    ports:
+    - "3000:3000"
+    depends_on:
+    - db    
+
+
